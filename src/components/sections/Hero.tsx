@@ -10,11 +10,11 @@ export function Hero() {
   const prixMinimum = Math.min(...offres.map((offre) => offre.prix));
 
   return (
-    <section id="hero" aria-labelledby="titre-hero" className="relative flex min-h-screen flex-col overflow-hidden pt-24">
+    <section id="hero" aria-labelledby="titre-hero" className="relative flex min-h-[100svh] flex-col overflow-hidden pt-20 sm:pt-24">
       {/* Le fond : des points d'encre qui réagissent à la souris. */}
       <ChampPixels />
 
-      <div className="cadre relative grid flex-1 items-center gap-10 pb-10 lg:grid-cols-[1.15fr_0.85fr]">
+      <div className="cadre relative grid flex-1 items-center gap-8 pb-8 sm:gap-10 sm:pb-10 lg:grid-cols-[1.15fr_0.85fr]">
         <div>
           <p className="libelle flex items-center gap-3 text-encre-2">
             <span aria-hidden="true" className="h-2 w-2 rounded-full bg-accent" />
@@ -26,7 +26,7 @@ export function Hero() {
           <h1
             id="titre-hero"
             aria-label="Un seul maillot. Tous tes joueurs."
-            className="mt-8 text-[clamp(3.25rem,7.6vw,7.5rem)] leading-[0.92] font-medium tracking-[-0.035em]"
+            className="mt-6 text-[clamp(2.35rem,9vw,7.5rem)] leading-[0.92] font-medium tracking-[-0.035em] sm:mt-8 sm:text-[clamp(3.25rem,7.6vw,7.5rem)]"
           >
             <span aria-hidden="true">
               <Lettres texte="Un seul maillot." />
@@ -37,19 +37,19 @@ export function Hero() {
             </span>
           </h1>
 
-          <p className="mt-8 max-w-xl text-xl leading-relaxed text-encre-2">
+          <p className="mt-6 max-w-xl text-base leading-relaxed sm:mt-8 sm:text-xl text-encre-2">
             Le dos du Floq est un écran d&apos;encre électronique. Tu changes le nom et le numéro depuis ton
             téléphone, en dix secondes, autant de fois que tu veux.
           </p>
 
-          <AppelAction className="mt-10" />
+          <AppelAction className="mt-8 sm:mt-10" />
 
-          <p className="libelle mt-10 text-encre-3">À partir de {prixMinimum} €</p>
+          <p className="libelle mt-6 text-encre-3 sm:mt-10">À partir de {prixMinimum} €</p>
         </div>
 
         {/* Le maillot en 3D : il suit la souris, et on peut le faire tourner en le tirant.
             La photo a beaucoup de marge noire, d'où l'agrandissement. */}
-        <div className="lg:scale-125">
+        <div className="mx-auto w-full max-w-[20rem] sm:max-w-[26rem] lg:max-w-none lg:scale-125">
           <HeroMaillot />
         </div>
       </div>

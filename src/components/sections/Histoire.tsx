@@ -11,13 +11,13 @@ export function Histoire() {
     <section id="histoire" aria-labelledby="titre-histoire" className="border-t border-trait">
       <Manifeste texte={histoire.citation} auteur={histoire.auteur} />
 
-      <div className="cadre grid items-center gap-14 pb-32 lg:grid-cols-[1.1fr_0.9fr]">
+      <div className="cadre grid items-center gap-8 pb-16 sm:gap-14 sm:pb-24 lg:pb-32 lg:grid-cols-[1.1fr_0.9fr]">
         <Apparition>
           <ImageOndulante
             src={fondateur}
             alt="Yanis à son établi, en train de souder un panneau d'encre électronique sur un maillot noir"
             sizes="(min-width: 1024px) 52vw, 95vw"
-            className="aspect-[3/2] w-full rounded-[2rem]"
+            className="aspect-[3/2] w-full rounded-2xl sm:rounded-[2rem]"
           />
         </Apparition>
 
@@ -25,7 +25,7 @@ export function Histoire() {
           <TitreSection id="titre-histoire" numero="03" libelle="L'histoire">
             Né dans <em className="font-serif font-normal">un garage,</em> pas dans une usine.
           </TitreSection>
-          <div className="mt-8 space-y-5 text-lg leading-relaxed text-encre-2">
+          <div className="mt-6 space-y-5 text-base sm:mt-8 sm:text-lg leading-relaxed text-encre-2">
             {histoire.paragraphes.map((paragraphe) => (
               <p key={paragraphe}>{paragraphe}</p>
             ))}

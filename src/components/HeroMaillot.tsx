@@ -29,8 +29,8 @@ export function HeroMaillot() {
         alt="Maillot Floq noir vu de dos : le nom et le numéro s'affichent sur un panneau d'encre électronique"
         prioritaire
       />
-      <p className="libelle mt-2 hidden text-center text-encre-3 lg:block" aria-hidden="true">
-        ← Tire pour le faire tourner →
+      <p className="libelle mt-2 text-center text-encre-3" aria-hidden="true">
+        ← Glisse pour le faire tourner →
       </p>
     </>
   );

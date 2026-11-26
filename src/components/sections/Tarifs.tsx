@@ -18,7 +18,7 @@ const imagesOffres: Record<string, { src: typeof coffret; alt: string }> = {
 // Section 5 : les tarifs. Trois offres, une seule mise en avant, aucun faux prix barré.
 export function Tarifs() {
   return (
-    <section id="tarifs" aria-labelledby="titre-tarifs" className="border-t border-trait py-32">
+    <section id="tarifs" aria-labelledby="titre-tarifs" className="border-t border-trait py-16 sm:py-24 lg:py-32">
       <div className="cadre">
         <Apparition>
           <TitreSection id="titre-tarifs" numero="05" libelle="Les tarifs">
@@ -26,14 +26,14 @@ export function Tarifs() {
           </TitreSection>
         </Apparition>
 
-        <ul className="mt-16 grid items-stretch gap-6 lg:grid-cols-3">
+        <ul className="mx-auto mt-10 grid max-w-xl items-stretch gap-6 sm:mt-16 lg:max-w-none lg:grid-cols-3">
           {offres.map((offre, i) => (
             <li key={offre.id} className="flex">
               <Apparition delai={i * 120} className="flex w-full">
                 {/* La carte penche légèrement en 3D sous la souris. */}
                 <Inclinaison angle={4} className="flex w-full">
                 <article
-                  className={`group relative flex w-full flex-col overflow-hidden rounded-[2rem] border bg-surface ${
+                  className={`group relative flex w-full flex-col overflow-hidden rounded-3xl border bg-surface sm:rounded-[2rem] ${
                     offre.miseEnAvant ? "border-accent" : "border-trait"
                   }`}
                 >
@@ -56,16 +56,16 @@ export function Tarifs() {
                     )}
                   </div>
 
-                  <div className="flex flex-1 flex-col p-8">
+                  <div className="flex flex-1 flex-col p-6 sm:p-8">
                     <h3 className="text-2xl font-medium tracking-tight">{offre.nom}</h3>
                     <p className="mt-1 text-encre-2">{offre.pour}</p>
 
-                    <p className="mt-8 text-6xl font-medium tracking-tight">
+                    <p className="mt-6 text-5xl font-medium sm:mt-8 sm:text-6xl tracking-tight">
                       {offre.prix} <span className="text-3xl">€</span>
                     </p>
                     <p className="libelle mt-3 text-encre-2">{offre.detailPrix}</p>
 
-                    <ul className="mt-8 flex-1 space-y-3 border-t border-trait pt-8">
+                    <ul className="mt-6 flex-1 space-y-3 border-t border-trait pt-6 sm:mt-8 sm:pt-8">
                       {offre.inclus.map((ligne) => (
                         <li key={ligne} className="flex gap-3 text-encre-2">
                           <span aria-hidden="true" className="text-accent">
@@ -76,7 +76,7 @@ export function Tarifs() {
                       ))}
                     </ul>
 
-                    <div className="mt-10">
+                    <div className="mt-8 sm:mt-10">
                       <BoutonOffre offre={offre.nom} prix={offre.prix} miseEnAvant={offre.miseEnAvant} />
                     </div>
                   </div>

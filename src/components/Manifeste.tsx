@@ -41,10 +41,10 @@ export function Manifeste({ texte, auteur }: Props) {
 
   return (
     // Le bloc est plus haut que l'écran : c'est ce qui laisse le temps de lire.
-    <div ref={ref} className="relative h-[190vh]">
-      <div className="sticky top-0 flex h-screen items-center">
+    <div ref={ref} className="relative h-[145vh] sm:h-[190vh]">
+      <div className="sticky top-0 flex h-[100dvh] items-center pt-14 sm:pt-16">
         <figure className="cadre">
-          <blockquote className="max-w-5xl text-[clamp(1.75rem,3.6vw,3.5rem)] leading-[1.15] font-medium tracking-tight">
+          <blockquote className="max-w-5xl text-[clamp(1.4rem,4.5vw,3.5rem)] leading-[1.15] font-medium tracking-tight sm:text-[clamp(1.75rem,3.6vw,3.5rem)]">
             {mots.map((mot, i) => (
               <span
                 key={i}
@@ -54,7 +54,7 @@ export function Manifeste({ texte, auteur }: Props) {
               </span>
             ))}
           </blockquote>
-          <figcaption className="libelle mt-10 text-encre-3">{auteur}</figcaption>
+          <figcaption className="libelle mt-6 text-encre-3 sm:mt-10">{auteur}</figcaption>
           {/* Barre de progression de la lecture. */}
           <div aria-hidden="true" className="mt-6 h-px w-full max-w-xs bg-trait">
             <div
