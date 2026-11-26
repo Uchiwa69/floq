@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { AppelAction } from "@/components/AppelAction";
-import { site } from "@/data/contenu";
+import { PiedDePage } from "@/components/PiedDePage";
 import terrain from "@/images/terrain.webp";
 
 // Le dernier appel à commander. Il est fixé au fond de l'écran, derrière toute la page :
@@ -27,11 +27,7 @@ export function DernierAppel() {
         </div>
       </div>
 
-      <footer className="relative border-t border-trait py-6">
-        <div className="cadre libelle text-encre-2">
-          <p>© 2026 {site.nom}</p>
-        </div>
-      </footer>
+      <PiedDePage />
     </div>
   );
 }
