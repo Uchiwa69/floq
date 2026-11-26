@@ -45,18 +45,19 @@ export function DemoFlocage() {
   };
 
   return (
-    <div className="grid items-center gap-8 lg:grid-cols-[1fr_auto_auto]">
+    <div className="grid items-center gap-6 sm:gap-8 lg:grid-cols-[1fr_auto_auto]">
       <div>
         <Maillot3D
           nom={affiche.nom}
           numero={affiche.numero}
           alt="Maillot Floq vu de dos, avec le flocage que tu viens d'envoyer"
-          className="mx-auto w-full max-w-lg"
+          className="mx-auto w-full max-w-[18rem] sm:max-w-md lg:max-w-lg"
         />
       </div>
 
-      {/* Le signal : cinq points qui s'allument l'un après l'autre, du téléphone vers le maillot. */}
-      <div aria-hidden="true" className="hidden flex-row-reverse items-center gap-3 lg:flex">
+      {/* Le signal : cinq points qui s'allument l'un après l'autre, du téléphone vers le maillot.
+          Vertical sous lg (le téléphone est sous le maillot), horizontal dès lg. */}
+      <div aria-hidden="true" className="flex flex-col-reverse items-center justify-center gap-3 lg:flex-row-reverse">
         {[0, 1, 2, 3, 4].map((i) => (
           <span
             key={i}
@@ -67,8 +68,8 @@ export function DemoFlocage() {
       </div>
 
       {/* Le téléphone. */}
-      <div className="mx-auto w-[20rem] rounded-[2.75rem] border border-trait bg-surface p-3 shadow-[0_0_80px_-20px_rgba(255,58,38,0.35)]">
-        <div className="relative overflow-hidden rounded-[2.1rem] bg-black px-5 pt-5 pb-6">
+      <div className="mx-auto w-full max-w-[20rem] rounded-[2.25rem] border border-trait bg-surface p-2.5 shadow-[0_0_80px_-20px_rgba(255,58,38,0.35)] sm:rounded-[2.75rem] sm:p-3">
+        <div className="relative overflow-hidden rounded-[1.75rem] bg-black px-4 pt-4 pb-5 sm:rounded-[2.1rem] sm:px-5 sm:pt-5 sm:pb-6">
           <div className="libelle flex items-center justify-between text-[0.65rem] text-encre-2">
             <span className="flex items-center gap-2">
               <span className="h-1.5 w-1.5 rounded-full bg-accent" />
@@ -77,7 +78,7 @@ export function DemoFlocage() {
             <span>Batterie 82 %</span>
           </div>
 
-          <form onSubmit={valider} className="mt-6">
+          <form onSubmit={valider} className="mt-5 sm:mt-6">
             <label className="block">
               <span className="libelle text-[0.65rem] text-encre-2">Nom</span>
               <input
@@ -89,7 +90,7 @@ export function DemoFlocage() {
                 // Au clic, tout le texte est sélectionné : on tape directement son nom par-dessus.
                 onFocus={(e) => e.target.select()}
                 onChange={(e) => setNom(e.target.value.toUpperCase())}
-                className="mt-1 w-full rounded-xl border border-trait bg-transparent px-3 py-1 font-flocage text-5xl uppercase outline-none focus:border-accent"
+                className="mt-1 w-full min-w-0 rounded-xl border border-trait bg-transparent px-3 py-1 font-flocage text-3xl uppercase outline-none focus:border-accent sm:text-5xl"
               />
             </label>
 
@@ -104,7 +105,7 @@ export function DemoFlocage() {
                   autoComplete="off"
                   // On ne garde que les chiffres.
                   onChange={(e) => setNumero(e.target.value.replace(/\D/g, ""))}
-                  className="mt-1 w-24 rounded-xl border border-trait bg-transparent px-3 py-1 font-flocage text-5xl outline-none focus:border-accent"
+                  className="mt-1 w-20 rounded-xl border border-trait bg-transparent px-3 py-1 font-flocage text-3xl outline-none focus:border-accent sm:w-24 sm:text-5xl"
                 />
               </label>
             </div>
@@ -126,7 +127,7 @@ export function DemoFlocage() {
             <button
               type="submit"
               disabled={etape !== "saisie"}
-              className="mt-6 w-full cursor-pointer rounded-full bg-accent py-3 font-flocage text-2xl tracking-wide text-black uppercase transition-colors hover:bg-encre disabled:cursor-default disabled:opacity-60"
+              className="mt-5 w-full cursor-pointer rounded-full bg-accent py-3 font-flocage text-xl tracking-wide sm:mt-6 sm:text-2xl text-black uppercase transition-colors hover:bg-encre disabled:cursor-default disabled:opacity-60"
             >
               {etape === "envoi" ? "Envoi…" : "Envoyer"}
             </button>
@@ -141,11 +142,11 @@ export function DemoFlocage() {
           >
             {etape === "confirme" && (
               <>
-                <svg viewBox="0 0 48 48" className="h-20 w-20" aria-hidden="true">
+                <svg viewBox="0 0 48 48" className="h-16 w-16 sm:h-20 sm:w-20" aria-hidden="true">
                   <circle cx="24" cy="24" r="21" fill="none" stroke="currentColor" strokeWidth="2.5" />
                   <path d="M15 25l6 6 12-13" fill="none" stroke="currentColor" strokeWidth="2.5" />
                 </svg>
-                <p className="font-flocage text-4xl leading-none uppercase">
+                <p className="font-flocage text-3xl leading-none uppercase sm:text-4xl">
                   Maillot
                   <br />
                   mis à jour

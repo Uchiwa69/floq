@@ -64,6 +64,8 @@ export function ChampPixels() {
     };
 
     const suivre = (event: PointerEvent) => {
+      // Au toucher, le doigt sert à défiler : on n'allume pas les points sous lui.
+      if (event.pointerType === "touch") return;
       const rect = toile.getBoundingClientRect();
       souris = { x: event.clientX - rect.left, y: event.clientY - rect.top };
     };
@@ -72,9 +74,12 @@ export function ChampPixels() {
     const observateur = new IntersectionObserver(([entree]) => {
       visible = entree.isIntersecting;
     });
+    // La toile peut changer de taille sans que la fenêtre bouge (hauteur du hero, barre d'adresse mobile...).
+    const redimension = new ResizeObserver(dimensionner);
 
     dimensionner();
     observateur.observe(toile);
+    redimension.observe(toile);
     window.addEventListener("resize", dimensionner);
     window.addEventListener("pointermove", suivre);
     image = requestAnimationFrame(dessiner);
@@ -82,6 +87,7 @@ export function ChampPixels() {
     return () => {
       cancelAnimationFrame(image);
       observateur.disconnect();
+      redimension.disconnect();
       window.removeEventListener("resize", dimensionner);
       window.removeEventListener("pointermove", suivre);
     };

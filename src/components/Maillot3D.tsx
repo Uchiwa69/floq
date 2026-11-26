@@ -246,7 +246,7 @@ export function Maillot3D({
     maillot.add(dos, face);
     scene.add(maillot);
 
-    // --- Les commandes : la souris fait pencher le maillot, un glisser le fait tourner. ---
+    // --- Les commandes : la souris fait pencher le maillot, un glisser (souris ou doigt de côté) le fait tourner. ---
     let actuel = angle.current ?? 0;
     let incline = 0;
     let penche = { x: 0, y: 0 }; // position de la souris, de -1 à 1
@@ -255,10 +255,36 @@ export function Maillot3D({
     let tour = 0; // rotation ajoutée par le glisser
     let elan = 0; // vitesse restante après avoir relâché
     let dernierGeste = 0;
+    // Au toucher, on attend de savoir si le doigt part de côté (rotation) ou vers le bas (défilement).
+    let toucher: { id: number; x: number; y: number } | null = null;
+    const SEUIL = 8; // déplacement minimal, en pixels, avant de trancher
     const libre = () => angle.current === undefined;
     const debut = performance.now();
+    // Capture le pointeur sans planter s'il n'est plus actif (ou s'il est synthétique).
+    const capturer = (pointerId: number) => {
+      try {
+        element.setPointerCapture(pointerId);
+      } catch {
+        // Le pointeur n'est plus actif : rien à capturer.
+      }
+    };
 
     const bouger = (event: PointerEvent) => {
+      // Un doigt posé sur le maillot, pas encore tranché : geste horizontal ou vertical ?
+      if (toucher && event.pointerId === toucher.id && !tire) {
+        const dx = event.clientX - toucher.x;
+        const dy = event.clientY - toucher.y;
+        if (Math.hypot(dx, dy) <= SEUIL) return;
+        if (Math.abs(dx) > Math.abs(dy)) {
+          // Horizontal : on fait tourner le maillot et on garde le doigt pour nous.
+          tire = true;
+          dernierX = event.clientX;
+          capturer(event.pointerId);
+        }
+        // Vertical : on laisse la page défiler normalement.
+        toucher = null;
+        return;
+      }
       if (tire) {
         const ecart = event.clientX - dernierX;
         dernierX = event.clientX;
@@ -267,6 +293,8 @@ export function Maillot3D({
         dernierGeste = performance.now();
         return;
       }
+      // Au toucher, pas de survol : le maillot ne penche pas vers le doigt.
+      if (event.pointerType === "touch") return;
       penche = {
         x: (event.clientX / window.innerWidth) * 2 - 1,
         y: (event.clientY / window.innerHeight) * 2 - 1,
@@ -274,18 +302,27 @@ export function Maillot3D({
     };
     const saisir = (event: PointerEvent) => {
       if (!libre()) return;
+      if (event.pointerType === "touch") {
+        toucher = { id: event.pointerId, x: event.clientX, y: event.clientY };
+        return;
+      }
       tire = true;
       dernierX = event.clientX;
-      element.setPointerCapture(event.pointerId);
+      capturer(event.pointerId);
     };
     const lacher = () => {
       tire = false;
+      toucher = null;
     };
 
     const dimensionner = () => {
       const { width, height } = zone.getBoundingClientRect();
+      // Élément masqué ou pas encore mis en page : on attend une vraie taille.
+      if (width === 0 || height === 0) return;
       rendu.setSize(width, height, false);
     };
+    // Le maillot peut changer de taille sans que la fenêtre bouge (mise en page fluide, rotation d'écran...).
+    const redimension = new ResizeObserver(dimensionner);
 
     const observateur = new IntersectionObserver(([entree]) => {
       visible = entree.isIntersecting;
@@ -346,10 +383,12 @@ export function Maillot3D({
 
     dimensionner();
     observateur.observe(zone);
+    redimension.observe(zone);
     window.addEventListener("resize", dimensionner);
     window.addEventListener("pointermove", bouger);
     element.addEventListener("pointerdown", saisir);
     window.addEventListener("pointerup", lacher);
+    window.addEventListener("pointercancel", lacher);
     image = requestAnimationFrame(dessiner);
     // On attend d'avoir dessiné une première image avant de masquer la photo.
     const apparition = setTimeout(() => setPret(true), 400);
@@ -358,10 +397,12 @@ export function Maillot3D({
       clearTimeout(apparition);
       cancelAnimationFrame(image);
       observateur.disconnect();
+      redimension.disconnect();
       window.removeEventListener("resize", dimensionner);
       window.removeEventListener("pointermove", bouger);
       element.removeEventListener("pointerdown", saisir);
       window.removeEventListener("pointerup", lacher);
+      window.removeEventListener("pointercancel", lacher);
       redessinerPanneau.current = () => {};
       plan.dispose();
       rendu.dispose();
