@@ -3,12 +3,9 @@ import { ChampPixels } from "@/components/ChampPixels";
 import { Defile } from "@/components/Defile";
 import { HeroMaillot } from "@/components/HeroMaillot";
 import { Lettres } from "@/components/Lettres";
-import { offres } from "@/data/contenu";
 
 // Section 1 : le hero. Le titre vend le bénéfice, pas la technologie.
 export function Hero() {
-  const prixMinimum = Math.min(...offres.map((offre) => offre.prix));
-
   return (
     <section id="hero" aria-labelledby="titre-hero" className="relative flex min-h-screen flex-col overflow-hidden pt-24">
       {/* Le fond : des points d'encre qui réagissent à la souris. */}
@@ -43,8 +40,6 @@ export function Hero() {
           </p>
 
           <AppelAction className="mt-10" />
-
-          <p className="libelle mt-10 text-encre-3">À partir de {prixMinimum} €</p>
         </div>
 
         {/* Le maillot en 3D : il suit la souris, et on peut le faire tourner en le tirant.
