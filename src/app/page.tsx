@@ -53,8 +53,8 @@ export default function Page() {
 
       <main>
         {/* Ce bloc opaque passe par-dessus le dernier appel, fixé derrière lui.
-            Sa marge du bas (100vh) laisse la place de le découvrir en fin de page. */}
-        <div className="relative z-10 mb-[100vh] rounded-b-[3rem] bg-fond">
+            Sa marge du bas (100dvh) laisse la place de le découvrir en fin de page. */}
+        <div className="relative z-10 mb-[100dvh] rounded-b-3xl sm:rounded-b-[3rem] bg-fond">
           <Hero />
           <Probleme />
           <Histoire />
