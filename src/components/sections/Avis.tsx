@@ -4,7 +4,7 @@ import { TitreSection } from "@/components/TitreSection";
 import { temoignages } from "@/data/contenu";
 import supporters from "@/images/supporters.webp";
 
-// Section 6 : les avis. Ils sont fictifs, et la page le dit de façon visible.
+// Section 6 : les avis. Ils sont inventés, et une mention visible le dit (c'est imposé par la consigne).
 export function Avis() {
   return (
     <section id="avis" aria-labelledby="titre-avis" className="border-t border-trait py-32">
@@ -26,7 +26,7 @@ export function Avis() {
         </Apparition>
 
         <p className="libelle mt-10 inline-block rounded-full border border-accent px-4 py-2 text-encre">
-          Avis fictifs, rédigés pour ce projet d&apos;école
+          Avis fictifs
         </p>
 
         <ul className="mt-8 grid gap-6 lg:grid-cols-3">

@@ -15,7 +15,7 @@ export function DemoFlocage() {
   const [nom, setNom] = useState("TON NOM");
   const [numero, setNumero] = useState("10");
   // ...et ce que le maillot affiche pour l'instant.
-  const [affiche, setAffiche] = useState<Flocage>({ nom: "RAYAN", numero: "10" });
+  const [affiche, setAffiche] = useState<Flocage>(exemples[0]);
   const [etape, setEtape] = useState<Etape>("saisie");
   const minuteurs = useRef<ReturnType<typeof setTimeout>[]>([]);
 

@@ -4,8 +4,8 @@ import { useRef } from "react";
 
 type Props = { offre: string; prix: number; miseEnAvant: boolean };
 
-// Le bouton "Commander" d'une offre. Comme Floq est un projet d'école,
-// il ouvre une fenêtre qui le dit clairement au lieu d'un vrai paiement.
+// Le bouton "Commander" d'une offre. Le maillot n'est pas encore en vente :
+// le bouton ouvre une fenêtre qui le dit, au lieu d'un vrai paiement.
 export function BoutonOffre({ offre, prix, miseEnAvant }: Props) {
   // <dialog> est la fenêtre modale native du navigateur.
   const fenetre = useRef<HTMLDialogElement>(null);
@@ -34,8 +34,8 @@ export function BoutonOffre({ offre, prix, miseEnAvant }: Props) {
         </p>
         <p className="mt-4 text-2xl font-medium tracking-tight">Merci, c&apos;est noté… ou presque.</p>
         <p className="mt-4 text-encre-2">
-          Floq est un projet d&apos;école : le maillot n&apos;est pas encore en vente et aucune commande n&apos;est
-          enregistrée. Aucun paiement ne t&apos;est demandé.
+          Le maillot Floq n&apos;est pas encore en vente : aucune commande n&apos;est enregistrée et aucun paiement
+          ne t&apos;est demandé.
         </p>
         {/* Un formulaire method="dialog" ferme la fenêtre sans JavaScript. */}
         <form method="dialog" className="mt-8">

@@ -31,21 +31,9 @@ export const chapitres: Chapitre[] = [
 // Les flocages qui défilent sur le maillot du hero.
 export type Flocage = { nom: string; numero: string };
 
-// On alterne des légendes lyonnaises des années 2000 et des prénoms de tous les jours :
-// c'est la promesse du produit, "tous tes joueurs" sur le même maillot.
+// L'équipe de Lyon de la grande époque, celle des années 2000. La même liste sert
+// partout : sur le maillot du hero, dans le bandeau qui défile et dans la démonstration.
 export const flocages: Flocage[] = [
-  { nom: "RAYAN", numero: "10" },
-  { nom: "JUNINHO", numero: "8" },
-  { nom: "LINA", numero: "7" },
-  { nom: "BENZEMA", numero: "10" },
-  { nom: "PAPA", numero: "1" },
-  { nom: "CRIS", numero: "3" },
-  { nom: "INÈS", numero: "23" },
-  { nom: "GOVOU", numero: "14" },
-];
-
-// Les exemples proposés sous la démonstration : l'équipe de Lyon de la grande époque.
-export const exemples: Flocage[] = [
   { nom: "JUNINHO", numero: "8" },
   { nom: "BENZEMA", numero: "10" },
   { nom: "COUPET", numero: "1" },
@@ -54,6 +42,9 @@ export const exemples: Flocage[] = [
   { nom: "ESSIEN", numero: "4" },
   { nom: "ABIDAL", numero: "20" },
 ];
+
+// Les joueurs proposés dans l'application de la démonstration : la même équipe.
+export const exemples = flocages;
 
 export type Constat = { chiffre: string; texte: string };
 
@@ -165,7 +156,7 @@ export const offres: Offre[] = [
 
 export type Temoignage = { initiales: string; nom: string; role: string; texte: string };
 
-// Avis fictifs : la mention est affichée dans la section.
+// Ces avis sont inventés : la section l'indique par une mention.
 export const temoignages: Temoignage[] = [
   {
     initiales: "LB",
@@ -214,9 +205,5 @@ export const questions: Question[] = [
     question: "Et si la taille ne me va pas ?",
     reponse: "Tu as 30 jours pour l'échanger ou te faire rembourser. Le retour est gratuit.",
   },
-  {
-    question: "Floq existe-t-il vraiment ?",
-    reponse:
-      "Pas encore. Floq est un projet réalisé dans le cadre d'une formation : le produit, les prix et les avis sont fictifs, et aucune commande n'est enregistrée.",
-  },
+
 ];

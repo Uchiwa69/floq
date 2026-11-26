@@ -28,9 +28,8 @@ export function DernierAppel() {
       </div>
 
       <footer className="relative border-t border-trait py-6">
-        <div className="cadre libelle flex flex-wrap justify-between gap-4 text-encre-2">
+        <div className="cadre libelle text-encre-2">
           <p>© 2026 {site.nom}</p>
-          <p>Projet pédagogique : produit, prix et avis fictifs</p>
         </div>
       </footer>
     </div>

@@ -32,8 +32,8 @@ export function Rotation() {
       <div className="sticky top-0 flex h-screen items-center overflow-hidden">
         <div className="cadre grid items-center gap-10 lg:grid-cols-2">
           <Maillot3D
-            nom="RAYAN"
-            numero="10"
+            nom="JUNINHO"
+            numero="8"
             angleImpose={angle}
             alt="Le maillot Floq qui tourne sur lui-même, de dos jusqu'à de face"
             className="mx-auto w-full max-w-[32rem]"
