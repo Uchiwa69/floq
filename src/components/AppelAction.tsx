@@ -8,12 +8,12 @@ export function AppelAction({ className = "" }: { className?: string }) {
     <div className={className}>
       <a
         href="#tarifs"
-        className="inline-flex items-center gap-3 rounded-full bg-accent px-8 py-4 text-lg font-medium text-black transition-colors hover:bg-encre"
+        className="inline-flex items-center gap-3 rounded-full bg-accent px-6 py-3.5 text-base sm:px-8 sm:py-4 sm:text-lg font-medium text-black transition-colors hover:bg-encre"
       >
         <TexteRoulant>Commander mon Floq</TexteRoulant>
         <span aria-hidden="true">→</span>
       </a>
-      <p className="libelle mt-4 text-encre-2">{site.reassurance}</p>
+      <p className="libelle mt-3 text-encre-2 sm:mt-4">{site.reassurance}</p>
     </div>
   );
 }

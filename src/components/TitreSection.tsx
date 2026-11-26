@@ -12,12 +12,12 @@ type Props = {
 export function TitreSection({ id, numero, libelle, children, className = "" }: Props) {
   return (
     <div className={className}>
-      <p className="libelle flex items-center gap-4 text-encre-2">
+      <p className="libelle flex items-center gap-3 text-encre-2 sm:gap-4">
         <span className="text-accent">{numero}</span>
-        <span aria-hidden="true" className="h-px w-10 bg-trait" />
+        <span aria-hidden="true" className="h-px w-8 bg-trait sm:w-10" />
         {libelle}
       </p>
-      <h2 id={id} className="mt-8 text-[clamp(2.5rem,5.4vw,5rem)] leading-[1] font-medium tracking-tight text-balance">
+      <h2 id={id} className="mt-6 text-[clamp(2rem,5.4vw,5rem)] sm:mt-8 leading-[1] font-medium tracking-tight text-balance">
         {children}
       </h2>
     </div>

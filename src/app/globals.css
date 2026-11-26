@@ -27,11 +27,17 @@ body {
   background: var(--color-fond);
   color: var(--color-encre);
   font-family: var(--font-sans), system-ui, sans-serif;
+  /* clip (et non hidden) : coupe le débordement horizontal sans casser position: sticky. */
+  overflow-x: clip;
 }
 
 /* Les ancres (#tarifs...) s'arrêtent sous l'en-tête fixe. */
 section[id] {
-  scroll-margin-top: 4.5rem;
+  scroll-margin-top: 4rem;
+
+  @media (width >= 40rem) {
+    scroll-margin-top: 4.5rem;
+  }
 }
 
 ::selection {
@@ -44,7 +50,11 @@ section[id] {
   margin-inline: auto;
   width: 100%;
   max-width: 84rem;
-  padding-inline: 1.5rem;
+  padding-inline: 1rem;
+
+  @media (width >= 40rem) {
+    padding-inline: 1.5rem;
+  }
 
   @media (width >= 80rem) {
     padding-inline: 5.5rem;
@@ -196,12 +206,15 @@ section[id] {
   transform: translateY(110%);
 }
 
-:is(a, button):hover .roule > span:first-child {
-  transform: translateY(-110%);
-}
+/* Seulement sur les appareils qui survolent vraiment : évite l'état "collé" au toucher. */
+@media (hover: hover) {
+  :is(a, button):hover .roule > span:first-child {
+    transform: translateY(-110%);
+  }
 
-:is(a, button):hover .roule > span:last-child {
-  transform: translateY(0);
+  :is(a, button):hover .roule > span:last-child {
+    transform: translateY(0);
+  }
 }
 
 /* Bandeau qui défile (voir components/Defile.tsx). La liste est écrite deux fois :

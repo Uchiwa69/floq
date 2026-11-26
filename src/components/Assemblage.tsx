@@ -50,13 +50,14 @@ export function Assemblage() {
   const calque = "absolute inset-0 h-full w-full mix-blend-lighten will-change-transform";
 
   return (
-    <div ref={ref} className="relative h-[300vh]">
-      <div className="sticky top-0 flex h-screen flex-col justify-center overflow-hidden">
+    <div ref={ref} className="relative h-[230vh] lg:h-[300vh]">
+      {/* pt-16 / sm:pt-20 : on laisse la place à l'en-tête fixe sous lg. */}
+      <div className="sticky top-0 flex h-[100dvh] flex-col justify-center overflow-hidden pt-16 pb-4 sm:pt-20 lg:py-0">
         <div className="cadre">
           <div className="flex items-end justify-between gap-8">
             <div>
               <p className="libelle text-accent">Ce qu&apos;il y a dedans</p>
-              <h3 className="mt-3 text-4xl font-medium tracking-tight">
+              <h3 className="mt-2 text-2xl font-medium tracking-tight sm:mt-3 sm:text-3xl lg:text-4xl">
                 Quatre couches. <em className="font-serif font-normal">Un seul maillot.</em>
               </h3>
             </div>
@@ -65,8 +66,10 @@ export function Assemblage() {
             </p>
           </div>
 
-          {/* isolate : les mélanges de calques restent à l'intérieur de ce cadre. */}
-          <div className="relative isolate mx-auto mt-4 aspect-[16/9] max-h-[62vh] w-full max-w-5xl bg-fond">
+          {/* isolate : les mélanges de calques restent à l'intérieur de ce cadre.
+              On limite la largeur (déduite de la hauteur d'écran) plutôt que la hauteur :
+              le cadre garde toujours son rapport 16/9, sur lequel les trajets en % sont réglés. */}
+          <div className="relative isolate mx-auto mt-3 aspect-[16/9] w-full max-w-[min(64rem,calc(36dvh*16/9))] bg-fond sm:mt-4 sm:max-w-[min(64rem,calc(46dvh*16/9))] lg:max-w-[min(64rem,calc(60vh*16/9))]">
             <Image
               src={coucheMaillot}
               alt="Vue éclatée du maillot Floq : le tissu, le circuit flexible, le panneau d'encre électronique et le module viennent se monter les uns dans les autres"
@@ -97,19 +100,19 @@ export function Assemblage() {
             />
           </div>
 
-          <ol className="grid border-t border-trait sm:grid-cols-2 lg:grid-cols-4">
+          <ol className="grid grid-cols-2 gap-x-4 border-t border-trait lg:grid-cols-4 lg:gap-x-0">
             {couches.map((couche, i) => (
               <li
                 key={couche.numero}
-                className={`border-b border-trait py-4 pr-6 transition-opacity duration-300 lg:border-b-0 ${
+                className={`border-b border-trait py-2 transition-opacity duration-300 sm:py-4 lg:border-b-0 lg:pr-6 ${
                   i === actif || termine ? "opacity-100" : "opacity-40"
                 }`}
               >
-                <p className="libelle flex gap-3">
+                <p className="libelle flex gap-2 sm:gap-3">
                   <span className="text-accent">{couche.numero}</span>
                   {couche.nom}
                 </p>
-                <p className="mt-2 text-sm text-encre-2">{couche.texte}</p>
+                <p className="mt-1 text-xs text-encre-2 sm:mt-2 sm:text-sm">{couche.texte}</p>
               </li>
             ))}
           </ol>

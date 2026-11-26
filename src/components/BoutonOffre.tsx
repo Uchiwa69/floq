@@ -27,18 +27,18 @@ export function BoutonOffre({ offre, prix, miseEnAvant }: Props) {
 
       <dialog
         ref={fenetre}
-        className="m-auto w-[min(32rem,calc(100%-2rem))] rounded-3xl border border-trait bg-surface p-8 text-encre backdrop:bg-black/75"
+        className="m-auto w-[min(32rem,calc(100%-2rem))] rounded-3xl border border-trait bg-surface p-6 text-encre sm:p-8 backdrop:bg-black/75"
       >
         <p className="libelle text-accent">
           Offre {offre} · {prix} €
         </p>
-        <p className="mt-4 text-2xl font-medium tracking-tight">Merci, c&apos;est noté… ou presque.</p>
+        <p className="mt-4 text-xl font-medium sm:text-2xl tracking-tight">Merci, c&apos;est noté… ou presque.</p>
         <p className="mt-4 text-encre-2">
           Le maillot Floq n&apos;est pas encore en vente : aucune commande n&apos;est enregistrée et aucun paiement
           ne t&apos;est demandé.
         </p>
         {/* Un formulaire method="dialog" ferme la fenêtre sans JavaScript. */}
-        <form method="dialog" className="mt-8">
+        <form method="dialog" className="mt-6 sm:mt-8">
           <button
             type="submit"
             className="cursor-pointer rounded-full border border-trait px-6 py-3 text-sm font-medium transition-colors hover:border-encre"

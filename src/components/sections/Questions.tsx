@@ -6,8 +6,8 @@ import { questions } from "@/data/contenu";
 // dans components/DernierAppel.tsx : il se découvre quand on arrive en bas de la page.
 export function Questions() {
   return (
-    <section id="questions" aria-labelledby="titre-questions" className="border-t border-trait py-32">
-      <div className="cadre grid gap-14 lg:grid-cols-[0.8fr_1.2fr]">
+    <section id="questions" aria-labelledby="titre-questions" className="border-t border-trait py-16 sm:py-24 lg:py-32">
+      <div className="cadre grid gap-10 lg:gap-14 lg:grid-cols-[0.8fr_1.2fr]">
         <Apparition>
           <TitreSection id="titre-questions" numero="07" libelle="Les questions">
             Ce qu&apos;on nous <em className="font-serif font-normal">demande</em> avant de commander.
@@ -19,23 +19,23 @@ export function Questions() {
           <div className="border-t border-trait">
             {questions.map((item) => (
               <details key={item.question} className="group border-b border-trait">
-                <summary className="flex cursor-pointer list-none items-center justify-between gap-6 py-6 text-xl font-medium [&::-webkit-details-marker]:hidden">
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-5 text-lg font-medium sm:gap-6 sm:py-6 sm:text-xl [&::-webkit-details-marker]:hidden">
                   {item.question}
                   <span
                     aria-hidden="true"
-                    className="text-2xl font-normal text-accent transition-transform group-open:rotate-45"
+                    className="shrink-0 text-2xl font-normal text-accent transition-transform group-open:rotate-45"
                   >
                     +
                   </span>
                 </summary>
-                <p className="max-w-2xl pb-8 text-lg leading-relaxed text-encre-2">{item.reponse}</p>
+                <p className="max-w-2xl pb-6 text-base leading-relaxed sm:pb-8 sm:text-lg text-encre-2">{item.reponse}</p>
               </details>
             ))}
           </div>
         </Apparition>
       </div>
 
-      <p className="libelle mt-24 text-center text-encre-3" aria-hidden="true">
+      <p className="libelle mt-16 text-center sm:mt-24 text-encre-3" aria-hidden="true">
         Continue de défiler ↓
       </p>
     </section>

@@ -10,7 +10,7 @@ export function Chargement() {
         {site.nom}
         <span className="text-accent">.</span>
       </p>
-      <p className="chargement-nombre font-flocage text-[9rem] leading-none" />
+      <p className="chargement-nombre font-flocage text-[clamp(5rem,18vw,9rem)] leading-none" />
       <p className="libelle text-encre-2">Chargement de l&apos;encre</p>
     </div>
   );

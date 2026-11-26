@@ -7,7 +7,7 @@ import supporters from "@/images/supporters.webp";
 // Section 6 : les avis. Ils sont inventés, et une mention visible le dit (c'est imposé par la consigne).
 export function Avis() {
   return (
-    <section id="avis" aria-labelledby="titre-avis" className="border-t border-trait py-32">
+    <section id="avis" aria-labelledby="titre-avis" className="border-t border-trait py-16 sm:py-24 lg:py-32">
       <div className="cadre">
         <Apparition>
           <TitreSection id="titre-avis" numero="06" libelle="Les avis">
@@ -15,17 +15,17 @@ export function Avis() {
           </TitreSection>
         </Apparition>
 
-        <Apparition className="mt-16">
+        <Apparition className="mt-10 sm:mt-16">
           <ImageOndulante
             src={supporters}
             alt="Un groupe de supporters vus de dos dans une tribune, trois d'entre eux portent un maillot Floq avec les numéros 7, 10 et 23"
             sizes="(min-width: 1280px) 1170px, 95vw"
-            className="aspect-[16/7] w-full rounded-[2rem]"
+            className="aspect-[4/3] w-full rounded-2xl sm:aspect-[16/7] sm:rounded-[2rem]"
             classeImage="object-[50%_40%]"
           />
         </Apparition>
 
-        <p className="libelle mt-10 inline-block rounded-full border border-accent px-4 py-2 text-encre">
+        <p className="libelle mt-8 inline-block sm:mt-10 rounded-full border border-accent px-4 py-2 text-encre">
           Avis fictifs
         </p>
 
@@ -33,9 +33,9 @@ export function Avis() {
           {temoignages.map((temoignage, i) => (
             <li key={temoignage.nom} className="flex">
               <Apparition delai={i * 120} className="flex w-full">
-                <figure className="flex w-full flex-col rounded-[2rem] border border-trait bg-surface p-8">
-                  <blockquote className="flex-1 text-xl leading-relaxed">« {temoignage.texte} »</blockquote>
-                  <figcaption className="mt-8 flex items-center gap-4 border-t border-trait pt-6">
+                <figure className="flex w-full flex-col rounded-3xl border border-trait bg-surface p-6 sm:rounded-[2rem] sm:p-8">
+                  <blockquote className="flex-1 text-lg leading-relaxed sm:text-xl">« {temoignage.texte} »</blockquote>
+                  <figcaption className="mt-6 flex items-center gap-4 sm:mt-8 border-t border-trait pt-6">
                     {/* Des initiales plutôt qu'un portrait : pas de faux visage. */}
                     <span
                       aria-hidden="true"
