@@ -1,26 +1,236 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
+/* Les couleurs et les polices du site. Tailwind en fait des classes :
+   bg-fond, text-encre, border-trait, font-serif, font-flocage... */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-fond: #000000;
+  --color-surface: #0f0f0e;
+  --color-encre: #f2eee7;
+  --color-encre-2: rgb(242 238 231 / 0.72);
+  --color-encre-3: rgb(242 238 231 / 0.56);
+  --color-trait: rgb(242 238 231 / 0.16);
+  --color-accent: #ff3a26;
+  --color-papier: #ecebe6;
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-serif: var(--font-instrument-serif);
+  --font-flocage: var(--font-barlow-condensed);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Le défilement fluide est géré par Lenis (components/DefilementDoux.tsx). */
+html {
+  background: var(--color-fond);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-fond);
+  color: var(--color-encre);
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+/* Les ancres (#tarifs...) s'arrêtent sous l'en-tête fixe. */
+section[id] {
+  scroll-margin-top: 4.5rem;
+}
+
+::selection {
+  background: var(--color-accent);
+  color: #000;
+}
+
+/* Largeur de page commune à toutes les sections. */
+@utility cadre {
+  margin-inline: auto;
+  width: 100%;
+  max-width: 84rem;
+  padding-inline: 1.5rem;
+
+  @media (width >= 80rem) {
+    padding-inline: 5.5rem;
+  }
+}
+
+/* Petit libellé en majuscules, police mono. */
+@utility libelle {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Apparition au défilement (voir components/Apparition.tsx). */
+.apparition {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 0.9s cubic-bezier(0.2, 0.7, 0.2, 1),
+    transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.apparition.est-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Rafraîchissement du panneau : un écran e-ink clignote en noir quand il change. */
+@keyframes rafraichir {
+  0% {
+    opacity: 0;
+  }
+  18% {
+    opacity: 0.92;
+  }
+  45% {
+    opacity: 0.12;
+  }
+  65% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.flash-eink {
+  opacity: 0;
+  animation: rafraichir 0.55s steps(6, end);
+}
+
+/* Titre du hero, lettre par lettre (voir components/Lettres.tsx).
+   Chaque mot est une fenêtre qui cache ses lettres tant qu'elles sont en dessous.
+   Le départ attend la fin de l'écran de chargement (1,5 s), puis 28 ms de plus par lettre. */
+.mot {
+  display: inline-block;
+  overflow: hidden;
+  /* un peu de marge pour ne pas rogner les accents et les jambages (j, p, q) */
+  padding-block: 0.12em;
+  margin-block: -0.12em;
+  vertical-align: bottom;
+}
+
+.lettre {
+  display: inline-block;
+  animation: monter 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+  animation-delay: calc(1.5s + var(--i) * 28ms);
+}
+
+@keyframes monter {
+  from {
+    transform: translateY(115%);
+  }
+}
+
+/* Halo qui suit la souris sur les cartes de tarifs (voir components/Inclinaison.tsx,
+   qui met à jour --mx et --my). */
+.halo {
+  background: radial-gradient(26rem circle at var(--mx, 50%) var(--my, 0%), rgb(255 58 38 / 0.2), transparent 65%);
+}
+
+/* Texte qui roule au survol (voir components/TexteRoulant.tsx).
+   Les deux copies du texte sont empilées dans la même case de grille. */
+.roule {
+  display: inline-grid;
+  overflow: hidden;
+  vertical-align: bottom;
+}
+
+.roule > span {
+  grid-area: 1 / 1;
+  transition: transform 0.45s cubic-bezier(0.6, 0, 0.2, 1);
+}
+
+.roule > span:last-child {
+  transform: translateY(110%);
+}
+
+:is(a, button):hover .roule > span:first-child {
+  transform: translateY(-110%);
+}
+
+:is(a, button):hover .roule > span:last-child {
+  transform: translateY(0);
+}
+
+/* Bandeau qui défile (voir components/Defile.tsx). La liste est écrite deux fois :
+   on la décale d'une moitié, puis l'animation recommence sans à-coup. */
+@keyframes defiler {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.defile {
+  animation: defiler 28s linear infinite;
+}
+
+/* Écran de chargement (voir components/Chargement.tsx).
+   @property déclare --compte comme un nombre entier, ce qui permet de l'animer de 0 à 100. */
+@property --compte {
+  syntax: "<integer>";
+  initial-value: 0;
+  inherits: false;
+}
+
+@keyframes compter {
+  to {
+    --compte: 100;
+  }
+}
+
+@keyframes lever-le-rideau {
+  to {
+    transform: translateY(-100%);
+    visibility: hidden;
+  }
+}
+
+.chargement {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  background: var(--color-fond);
+  pointer-events: none;
+  animation: lever-le-rideau 0.7s 1.25s cubic-bezier(0.7, 0, 0.2, 1) forwards;
+}
+
+.chargement-nombre::after {
+  counter-reset: compte var(--compte);
+  content: counter(compte);
+  animation: compter 1.15s ease-out forwards;
+}
+
+/* Les personnes qui ont demandé moins d'animations n'en voient aucune. */
+@media (prefers-reduced-motion: reduce) {
+  .lettre {
+    animation: none;
+  }
+
+  .chargement {
+    display: none;
+  }
+
+  .defile {
+    animation: none;
+  }
+
+  .roule > span {
+    transition: none;
+  }
+
+  .apparition {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .flash-eink {
+    animation: none;
+  }
 }

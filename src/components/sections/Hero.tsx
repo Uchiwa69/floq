@@ -1,0 +1,65 @@
+import { AppelAction } from "@/components/AppelAction";
+import { ChampPixels } from "@/components/ChampPixels";
+import { Defile } from "@/components/Defile";
+import { HeroMaillot } from "@/components/HeroMaillot";
+import { Lettres } from "@/components/Lettres";
+import { offres } from "@/data/contenu";
+
+// Section 1 : le hero. Le titre vend le bénéfice, pas la technologie.
+export function Hero() {
+  const prixMinimum = Math.min(...offres.map((offre) => offre.prix));
+
+  return (
+    <section id="hero" aria-labelledby="titre-hero" className="relative flex min-h-screen flex-col overflow-hidden pt-24">
+      {/* Le fond : des points d'encre qui réagissent à la souris. */}
+      <ChampPixels />
+
+      <div className="cadre relative grid flex-1 items-center gap-10 pb-10 lg:grid-cols-[1.15fr_0.85fr]">
+        <div>
+          <p className="libelle flex items-center gap-3 text-encre-2">
+            <span aria-hidden="true" className="h-2 w-2 rounded-full bg-accent" />
+            Le maillot au flocage électronique
+          </p>
+
+          {/* Le seul <h1> de la page. */}
+          {/* aria-label donne le titre d'un bloc aux lecteurs d'écran, puisqu'il est découpé en lettres. */}
+          <h1
+            id="titre-hero"
+            aria-label="Un seul maillot. Tous tes joueurs."
+            className="mt-8 text-[clamp(3.25rem,7.6vw,7.5rem)] leading-[0.92] font-medium tracking-[-0.035em]"
+          >
+            <span aria-hidden="true">
+              <Lettres texte="Un seul maillot." />
+              <br />
+              <em className="font-serif font-normal tracking-[-0.02em] text-accent">
+                <Lettres texte="Tous tes joueurs." depart={14} />
+              </em>
+            </span>
+          </h1>
+
+          <p className="mt-8 max-w-xl text-xl leading-relaxed text-encre-2">
+            Le dos du Floq est un écran d&apos;encre électronique. Tu changes le nom et le numéro depuis ton
+            téléphone, en dix secondes, autant de fois que tu veux.
+          </p>
+
+          <AppelAction className="mt-10" />
+
+          <p className="libelle mt-10 text-encre-3">À partir de {prixMinimum} €</p>
+        </div>
+
+        {/* Le maillot en 3D : il suit la souris, et on peut le faire tourner en le tirant.
+            La photo a beaucoup de marge noire, d'où l'agrandissement. */}
+        <div className="lg:scale-125">
+          <HeroMaillot />
+          <p className="libelle mt-2 hidden text-center text-encre-3 lg:block" aria-hidden="true">
+            ← Tire pour le faire tourner →
+          </p>
+        </div>
+      </div>
+
+      <div className="relative bg-fond">
+        <Defile />
+      </div>
+    </section>
+  );
+}
