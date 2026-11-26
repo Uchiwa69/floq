@@ -45,6 +45,8 @@ export default function Page() {
       />
 
       <Chargement />
+      {/* Grain de pellicule sur toute la page (classe .grain dans globals.css). */}
+      <div className="grain" aria-hidden="true" />
       <DefilementDoux />
       <Curseur />
       <Navigation />

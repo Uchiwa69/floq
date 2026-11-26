@@ -22,11 +22,16 @@ export function HeroMaillot() {
   const flocage = flocages[index];
 
   return (
-    <Maillot3D
-      nom={flocage.nom}
-      numero={flocage.numero}
-      alt="Maillot Floq noir vu de dos : le nom et le numéro s'affichent sur un panneau d'encre électronique"
-      prioritaire
-    />
+    <>
+      <Maillot3D
+        nom={flocage.nom}
+        numero={flocage.numero}
+        alt="Maillot Floq noir vu de dos : le nom et le numéro s'affichent sur un panneau d'encre électronique"
+        prioritaire
+      />
+      <p className="libelle mt-2 hidden text-center text-encre-3 lg:block" aria-hidden="true">
+        ← Tire pour le faire tourner →
+      </p>
+    </>
   );
 }

@@ -15,6 +15,7 @@ type Props = {
   // Si un angle est imposé (en radians, 0 = de dos, Math.PI = de face),
   // c'est lui qui commande et la souris ne fait rien. Sert à la rotation au défilement.
   angleImpose?: number;
+  // true pour le hero : image chargée en priorité, et travelling arrière à l'ouverture.
   prioritaire?: boolean;
   className?: string;
 };
@@ -26,54 +27,93 @@ const HAUTEUR = 1152 / 928;
 const EPAISSEUR = 0.13;
 // Où se trouve le panneau sur la photo de dos, en proportion de l'image.
 const PANNEAU = { x: 0.331, y: 0.216, largeur: 0.34, hauteur: 0.34 };
+// La caméra : sa distance normale, et sa position de départ pour le travelling du hero.
+const DISTANCE = 2.5;
+const GROS_PLAN = { z: 1.05, y: 0.17 };
 
-// Le "vertex shader" déplace chaque point du plan : plus la carte de relief est claire
-// à cet endroit, plus le point avance. C'est ce qui transforme une photo plate en volume.
+// Le "vertex shader" s'exécute pour chaque point du plan. Il fait deux choses :
+// 1. il avance le point selon la carte de relief, ce qui transforme la photo plate en volume ;
+// 2. il calcule vers où "regarde" la surface à cet endroit (la normale), pour l'éclairage.
 const deplacement = /* glsl */ `
   uniform sampler2D uRelief;
   uniform float uEpaisseur;
   uniform float uMiroir;
   varying vec2 vUv;
   varying vec2 vUvRelief;
+  varying vec3 vNormale;
+
+  // Hauteur du tissu à un endroit de la carte de relief.
+  // 0.5 = le bord de la silhouette, 1.0 = le cœur du maillot. Le sinus arrondit les flancs.
+  float hauteur(vec2 ou) {
+    float bord = texture2D(uRelief, ou).r;
+    return sin(clamp((bord - 0.5) * 2.0, 0.0, 1.0) * 1.5708) * uEpaisseur;
+  }
 
   void main() {
     vUv = uv;
     // La face utilise la même carte de relief que le dos, lue en miroir :
     // les deux coques ont ainsi exactement le même contour et se rejoignent sans trou.
     vUvRelief = vec2(mix(uv.x, 1.0 - uv.x, uMiroir), uv.y);
-    float bord = texture2D(uRelief, vUvRelief).r;
-    // 0.5 = le bord de la silhouette, 1.0 = le cœur du maillot. Le sinus arrondit les flancs.
-    float relief = sin(clamp((bord - 0.5) * 2.0, 0.0, 1.0) * 1.5708);
-    vec3 point = position + vec3(0.0, 0.0, relief * uEpaisseur);
+
+    // La pente du relief : on compare la hauteur un peu à gauche et un peu à droite,
+    // puis un peu en bas et un peu en haut. La normale est perpendiculaire à cette pente.
+    float pas = 0.012;
+    float sens = mix(1.0, -1.0, uMiroir);
+    float penteX = (hauteur(vUvRelief + vec2(pas, 0.0)) - hauteur(vUvRelief - vec2(pas, 0.0))) / (2.0 * pas) * sens;
+    float penteY = (hauteur(vUvRelief + vec2(0.0, pas)) - hauteur(vUvRelief - vec2(0.0, pas))) / (2.0 * pas * ${HAUTEUR.toFixed(4)});
+    vNormale = normalize(normalMatrix * vec3(-penteX, -penteY, 1.0));
+
+    vec3 point = position + vec3(0.0, 0.0, hauteur(vUvRelief));
     gl_Position = projectionMatrix * modelViewMatrix * vec4(point, 1.0);
   }
 `;
 
-// Le "fragment shader" colorie chaque pixel avec la photo, et rend le fond transparent.
+// Le "fragment shader" s'exécute pour chaque pixel. Il part de la photo,
+// puis ajoute une lumière qui suit la souris.
 const couleur = /* glsl */ `
   uniform sampler2D uPhoto;
   uniform sampler2D uRelief;
   uniform float uProfil;
+  uniform vec3 uLumiere; // direction de la lumière, pilotée par la souris
   varying vec2 vUv;
   varying vec2 vUvRelief;
+  varying vec3 vNormale;
 
   void main() {
     vec4 relief = texture2D(uRelief, vUvRelief);
-    if (relief.g < 0.5) discard;
-    gl_FragColor = texture2D(uPhoto, vUv);
+    if (relief.g < 0.5) discard; // hors de la silhouette : transparent
+
+    vec3 c = texture2D(uPhoto, vUv).rgb;
+
+    // --- Éclairer : une lumière douce qui suit la souris, et un liseré orangé sur les bords. ---
+    vec3 normale = normalize(vNormale);
+    float eclaire = max(dot(normale, normalize(uLumiere)), 0.0);
+    c *= 0.8 + 0.5 * eclaire * eclaire;
+    float contour = pow(1.0 - clamp(normale.z, 0.0, 1.0), 3.5);
+    c += vec3(1.0, 0.23, 0.15) * contour * 0.16;
+
     // Vu de profil (uProfil proche de 1), on assombrit les flancs : la jointure
     // entre les deux coques se fond dans l'ombre.
     float flanc = smoothstep(0.0, 0.7, clamp((relief.r - 0.5) * 2.0, 0.0, 1.0));
-    gl_FragColor.rgb *= mix(1.0, flanc, uProfil);
+    c *= mix(1.0, flanc, uProfil);
+
+    gl_FragColor = vec4(c, 1.0);
     #include <colorspace_fragment>
   }
 `;
 
 // Un maillot en vraie 3D, construit à partir de deux photos (dos et face) gonflées
 // par une carte de relief. Le volume est convaincant de trois quarts, moins de profil :
-// la page ne s'arrête donc jamais sur la tranche. Tant que la 3D n'est pas prête (ou si elle est indisponible),
-// on voit la version en image : la page reste complète sans WebGL.
-export function Maillot3D({ nom, numero, alt, angleImpose, prioritaire = false, className = "" }: Props) {
+// la page ne s'arrête donc jamais sur la tranche. Tant que la 3D n'est pas prête
+// (ou si elle est indisponible), on voit la version en image : la page reste complète sans WebGL.
+export function Maillot3D({
+  nom,
+  numero,
+  alt,
+  angleImpose,
+  prioritaire = false,
+  className = "",
+}: Props) {
   const conteneur = useRef<HTMLDivElement>(null);
   const toile = useRef<HTMLCanvasElement>(null);
   const [pret, setPret] = useState(false);
@@ -111,7 +151,7 @@ export function Maillot3D({ nom, numero, alt, angleImpose, prioritaire = false, 
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(30, LARGEUR / HAUTEUR, 0.1, 10);
-    camera.position.z = 2.5;
+    camera.position.z = DISTANCE;
 
     const chargeur = new THREE.TextureLoader();
     const charger = (url: string, couleurs: boolean) => {
@@ -132,6 +172,7 @@ export function Maillot3D({ nom, numero, alt, angleImpose, prioritaire = false, 
 
     const photoDos = new window.Image();
     let flash = 0; // de 1 (panneau noir) à 0 : le clignotement e-ink
+    let visible = true;
 
     const dessinerDos = () => {
       if (!crayon || !photoDos.complete || photoDos.naturalWidth === 0) return;
@@ -180,17 +221,18 @@ export function Maillot3D({ nom, numero, alt, angleImpose, prioritaire = false, 
     // --- Les deux coques : un plan très découpé pour le dos, un autre pour la face. ---
     const plan = new THREE.PlaneGeometry(LARGEUR, HAUTEUR, 150, 186);
     const relief = charger(reliefDos.src, false);
+    // Ces valeurs sont partagées par les deux coques : les changer une fois suffit.
+    const communs = {
+      uRelief: { value: relief },
+      uEpaisseur: { value: EPAISSEUR },
+      uProfil: { value: 0 },
+      uLumiere: { value: new THREE.Vector3(0.3, 0.4, 1) },
+    };
     const coque = (photo: THREE.Texture, miroir: number) =>
       new THREE.Mesh(
         plan,
         new THREE.ShaderMaterial({
-          uniforms: {
-            uPhoto: { value: photo },
-            uRelief: { value: relief },
-            uEpaisseur: { value: EPAISSEUR },
-            uMiroir: { value: miroir },
-            uProfil: { value: 0 },
-          },
+          uniforms: { ...communs, uPhoto: { value: photo }, uMiroir: { value: miroir } },
           vertexShader: deplacement,
           fragmentShader: couleur,
         }),
@@ -205,7 +247,6 @@ export function Maillot3D({ nom, numero, alt, angleImpose, prioritaire = false, 
     scene.add(maillot);
 
     // --- Les commandes : la souris fait pencher le maillot, un glisser le fait tourner. ---
-    let visible = true;
     let actuel = angle.current ?? 0;
     let incline = 0;
     let penche = { x: 0, y: 0 }; // position de la souris, de -1 à 1
@@ -215,6 +256,7 @@ export function Maillot3D({ nom, numero, alt, angleImpose, prioritaire = false, 
     let elan = 0; // vitesse restante après avoir relâché
     let dernierGeste = 0;
     const libre = () => angle.current === undefined;
+    const debut = performance.now();
 
     const bouger = (event: PointerEvent) => {
       if (tire) {
@@ -254,12 +296,22 @@ export function Maillot3D({ nom, numero, alt, angleImpose, prioritaire = false, 
     const dessiner = () => {
       image = requestAnimationFrame(dessiner);
       if (!visible) return; // On ne calcule rien quand le maillot est hors de l'écran.
-      const temps = performance.now() / 1000;
+      const maintenant = performance.now();
+      const temps = maintenant / 1000;
 
       // Le clignotement du panneau s'éteint par paliers.
       if (flash > 0.01) {
         flash = flash > 0.12 ? flash * 0.86 : 0;
         dessinerDos();
+      }
+
+      // Le travelling du hero : la caméra part d'un gros plan sur le panneau, puis recule.
+      // Il démarre quand l'écran de chargement se lève (1,3 s) et dure 2,2 s.
+      if (prioritaire) {
+        const t = Math.min(1, Math.max(0, (maintenant - debut - 1300) / 2200));
+        const doux = 1 - (1 - t) ** 3;
+        camera.position.z = GROS_PLAN.z + (DISTANCE - GROS_PLAN.z) * doux;
+        camera.position.y = GROS_PLAN.y * (1 - doux);
       }
 
       let cible: number;
@@ -268,7 +320,7 @@ export function Maillot3D({ nom, numero, alt, angleImpose, prioritaire = false, 
           tour += elan;
           elan *= 0.94;
           // Deux secondes après le dernier geste, le maillot revient montrer son dos.
-          if (performance.now() - dernierGeste > 2000) {
+          if (maintenant - dernierGeste > 2000) {
             const tourComplet = Math.round(tour / (Math.PI * 2)) * Math.PI * 2;
             tour += (tourComplet - tour) * 0.04;
           }
@@ -286,9 +338,9 @@ export function Maillot3D({ nom, numero, alt, angleImpose, prioritaire = false, 
       maillot.rotation.y = actuel;
       maillot.rotation.x = incline;
       // 0 de dos ou de face, 1 pile de profil.
-      const profil = Math.abs(Math.sin(actuel)) ** 3;
-      (dos.material as THREE.ShaderMaterial).uniforms.uProfil.value = profil;
-      (face.material as THREE.ShaderMaterial).uniforms.uProfil.value = profil;
+      communs.uProfil.value = Math.abs(Math.sin(actuel)) ** 3;
+      // La lumière vient de là où se trouve la souris.
+      communs.uLumiere.value.set(penche.x * 1.4, -penche.y * 1.1 + 0.3, 1);
       rendu.render(scene, camera);
     };
 
@@ -314,7 +366,7 @@ export function Maillot3D({ nom, numero, alt, angleImpose, prioritaire = false, 
       plan.dispose();
       rendu.dispose();
     };
-  }, []);
+  }, [prioritaire]);
 
   const interactif = angleImpose === undefined;
 

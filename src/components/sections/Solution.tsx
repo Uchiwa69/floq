@@ -29,7 +29,13 @@ export function Solution() {
 
         {/* La démonstration : le visiteur essaie le produit sur la page. */}
         <Apparition className="mt-20 rounded-[2.5rem] border border-trait p-8 lg:p-14">
-          <DemoFlocage />
+          <p className="libelle text-accent">Essaie</p>
+          <h3 className="mt-3 text-3xl font-medium tracking-tight lg:text-4xl">
+            Écris ton nom, envoie. <em className="font-serif font-normal">Le maillot suit.</em>
+          </h3>
+          <div className="mt-6">
+            <DemoFlocage />
+          </div>
         </Apparition>
       </div>
 

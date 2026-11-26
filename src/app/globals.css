@@ -128,6 +128,57 @@ section[id] {
   background: radial-gradient(26rem circle at var(--mx, 50%) var(--my, 0%), rgb(255 58 38 / 0.2), transparent 65%);
 }
 
+/* Le signal entre le téléphone et le maillot (voir components/DemoFlocage.tsx) :
+   chaque point grossit puis s'éteint, avec un retard différent pour chacun. */
+@keyframes signal {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.25;
+  }
+  40% {
+    transform: scale(2.2);
+    opacity: 1;
+  }
+}
+
+.signal {
+  animation: signal 0.8s ease-in-out infinite;
+}
+
+/* Les trois écrans de l'application qui se succèdent dans le téléphone
+   (voir components/BeneficesDefilants.tsx). Chaque écran est visible un tiers du temps. */
+@keyframes ecran {
+  0%,
+  28% {
+    opacity: 1;
+  }
+  33%,
+  95% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.ecran {
+  opacity: 0;
+  animation: ecran 7.5s linear infinite;
+}
+
+/* Un grain de pellicule très léger sur toute la page. C'est une image de bruit
+   générée en SVG, posée par-dessus tout, qui laisse passer les clics. */
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  pointer-events: none;
+  opacity: 0.07;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+}
+
 /* Texte qui roule au survol (voir components/TexteRoulant.tsx).
    Les deux copies du texte sont empilées dans la même case de grille. */
 .roule {
@@ -216,8 +267,18 @@ section[id] {
     display: none;
   }
 
-  .defile {
+  .defile,
+  .signal {
     animation: none;
+  }
+
+  /* Sans animation, on montre seulement le premier écran de l'application. */
+  .ecran {
+    animation: none;
+  }
+
+  .ecran:first-child {
+    opacity: 1;
   }
 
   .roule > span {

@@ -51,9 +51,6 @@ export function Hero() {
             La photo a beaucoup de marge noire, d'où l'agrandissement. */}
         <div className="lg:scale-125">
           <HeroMaillot />
-          <p className="libelle mt-2 hidden text-center text-encre-3 lg:block" aria-hidden="true">
-            ← Tire pour le faire tourner →
-          </p>
         </div>
       </div>
 

@@ -4,6 +4,9 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { benefices } from "@/data/contenu";
 import { useAvancement } from "@/hooks/useAvancement";
+import appListe from "@/images/app-liste.webp";
+import appSaisie from "@/images/app-saisie.webp";
+import appValide from "@/images/app-valide.webp";
 import application from "@/images/application.webp";
 import moduleAmovible from "@/images/module.webp";
 import vestiaire from "@/images/vestiaire.webp";
@@ -13,6 +16,13 @@ const images = [
   { src: vestiaire, alt: "Sept maillots Floq suspendus dans un vestiaire, chacun avec un numéro différent" },
   { src: application, alt: "Téléphone affichant l'application Floq devant le maillot qui porte le même nom" },
   { src: moduleAmovible, alt: "Une main déclipse le petit module noir du bas du maillot" },
+];
+
+// Les trois écrans de l'application, montrés à tour de rôle dans le deuxième bénéfice.
+const ecrans = [
+  { src: appSaisie, alt: "Écran de l'application Floq : saisie du nom Rayan et du numéro 10, bouton Envoyer" },
+  { src: appListe, alt: "Écran de l'application Floq : la liste des joueurs enregistrés" },
+  { src: appValide, alt: "Écran de l'application Floq : confirmation, maillot mis à jour" },
 ];
 
 // Les trois bénéfices, dans une galerie qui avance de côté pendant qu'on défile vers le bas.
@@ -54,14 +64,34 @@ export function BeneficesDefilants() {
         >
           {benefices.map((benefice, i) => (
             <li key={benefice.titre} className="grid w-[min(82vw,64rem)] items-center gap-10 lg:grid-cols-[1.1fr_0.9fr]">
-              <div className="overflow-hidden rounded-[2rem]">
-                <Image
-                  src={images[i].src}
-                  alt={images[i].alt}
-                  sizes="(min-width: 1024px) 36rem, 82vw"
-                  className="aspect-[4/3] w-full object-cover transition-transform duration-700 hover:scale-105"
-                />
-              </div>
+              {i === 1 ? (
+                // Le deuxième bénéfice montre l'application : trois écrans qui se succèdent dans un téléphone.
+                <div className="flex aspect-[4/3] items-center justify-center rounded-[2rem] bg-surface">
+                  <div className="relative h-[88%] rounded-[1.75rem] border border-trait bg-black p-2">
+                    <div className="relative aspect-[768/1376] h-full overflow-hidden rounded-[1.25rem]">
+                      {ecrans.map((ecran, rang) => (
+                        <Image
+                          key={ecran.alt}
+                          src={ecran.src}
+                          alt={ecran.alt}
+                          sizes="16rem"
+                          style={{ animationDelay: `${rang * 2.5}s` }}
+                          className="ecran absolute inset-0 h-full w-full object-cover"
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="overflow-hidden rounded-[2rem]">
+                  <Image
+                    src={images[i].src}
+                    alt={images[i].alt}
+                    sizes="(min-width: 1024px) 36rem, 82vw"
+                    className="aspect-[4/3] w-full object-cover transition-transform duration-700 hover:scale-105"
+                  />
+                </div>
+              )}
               <div>
                 <p className="font-flocage text-[7rem] leading-none text-accent" aria-hidden="true">
                   {String(i + 1).padStart(2, "0")}
